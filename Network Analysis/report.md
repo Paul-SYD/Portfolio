@@ -90,10 +90,10 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
 
 **Capture 3:** Control Communication
 
- i. Attacker IP: 192.168.56.102
- ii. Target IP: 192.168.56.101
- iii. Description: Patterned traffic consistent with command and control activity.
- iv. Severity: High
+ i. Attacker IP: 192.168.56.102<br>
+ ii. Target IP: 192.168.56.101<br>
+ iii. Description: Patterned traffic consistent with command and control activity.<br>
+ iv. Severity: High<br>
 
 
 **Capture 4:** FTP Brute force attack<br>
@@ -132,7 +132,7 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
 
  
 
-** Incident Response Evaluation**
+**Incident Response Evaluation**
 
 **Application of the CyBOK Incident Response Model**
 
