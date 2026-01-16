@@ -79,6 +79,10 @@ Capture 1: FTP Brute Force attack
   iii. Repeated Login attempts on FTP port 21, exposing clear-text credentials
   iv. Severity: High
 
+  ![capture1.1] (Screenshots/Ss1.jpeg)
+  ![capture1.2] (Screenshots/Ss2.jpeg)
+  ![capture1.3] (Screenshots/Ss3.jpeg)
+
 
 Capture 2: Stealth Scanning
 
