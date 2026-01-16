@@ -1,5 +1,5 @@
-**My SOC Analyst Journey Portfolio
-**
+**My SOC Analyst Journey Portfolio**<br>
+
 Welcome to my Security Operations Center (SOC) Analyst Portfolio.
 This repository documents my hands-on learning journey into cybersecurity, with a strong focus on threat detection, network analysis, vulnerability assessment, and intrusion detection systems.
 
