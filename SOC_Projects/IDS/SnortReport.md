@@ -24,7 +24,8 @@ iii. Simulate attack traffic
 iv. Analyze IDS alerts in real time
 
 3. Lab Architecture
-The lab was designed using three virtual machines on the same internal network.
+
+ The lab was designed using three virtual machines on the same internal network.
 
 4. Machines Used
 
@@ -58,6 +59,8 @@ Since I wanted Snort to monitor all traffic on the subnet (not just one host), I
 
 Snort version 2.9.20 installed successfully.
 
+ ![Snort](Snort-SS/snort1.png) 
+
 Writing Custom Snort Rules (The Core of the Lab)
 
 Instead of relying solely on default rules, I created custom rule files to better understand how Snort detects different attack patterns.
@@ -72,7 +75,9 @@ All rule files were stored in:
 This rule detects basic ICMP echo requests.
 
  sudo nano /etc/snort/rules/icmp.rules
- alert icmp any any -> any any (msg:"ICMP Ping Detected"; sid:100001; rev:1;)
+  alert icmp any any -> any any (msg:"ICMP Ping Detected"; sid:100001; rev:1;)
+
+  ![Snort](Snort-SS/snort2.png)
 
 
 2. Detecting Nmap SYN Scans
@@ -82,6 +87,8 @@ SYN scans are commonly used during reconnaissance.
  sudo nano /etc/snort/rules/nmap.rules
  alert tcp any any -> any any (msg:"Nmap SYN Scan Detected"; flags:S; sid:100002; rev:1
 
+  ![Snort](Snort-SS/snort3.png)
+
 
 3. Detecting hping3 Traffic
 
@@ -90,11 +97,15 @@ hping3 is often used for packet crafting and flooding attacks.
  sudo nano /etc/snort/rules/hping3.rules
  alert tcp any any -> any any (msg:"Possible hping3 Traffic"; flags:0; sid:100003; rev:1;)
 
+  ![Snort](Snort-SS/snort4.png)
+
 4. Detecting SSH Connection Attempts
 This rule detects incoming SSH connection attempts to port 22.
 
  sudo nano /etc/snort/rules/ssh.rules
  alert tcp any any -> any 22 (msg:"SSH Connection Attempt"; flags:S; sid:100004; rev:1;)
+
+ ![Snort](Snort-SS/snort5.png)
 
 
 Configuring Snort to Use Custom Rules
@@ -109,6 +120,8 @@ The HOME_NET variable was updated:
 
  ipvar HOME_NET 192.168.72.0/24
 
+ ![Snort](Snort-SS/snort6.png)
+
 At the bottom of the configuration file, the custom rules were included:
 
  include $RULE_PATH/icmp.rules
@@ -116,12 +129,16 @@ At the bottom of the configuration file, the custom rules were included:
  include $RULE_PATH/hping3.rules
  include $RULE_PATH/ssh.rules
 
+  ![Snort](Snort-SS/snort7.png)
+
 
 Running Snort in Real Time
 
  Once configured, Snort was launched in console mode to display alerts live.
 
   sudo snort -A console -q -c /etc/snort/snort.conf -i ens33
+
+  ![Snort](Snort-SS/snort8.png)
 
 The active network interface was confirmed using:
 
@@ -136,19 +153,27 @@ ICMP Ping Test
 
  ping -c 3 <Target_VM_IP>
 
+ ![Snort](Snort-SS/snort9.png)
+
 Nmap SYN Scan
 
  sudo nmap -sS <Target_VM_IP>
 
+ ![Snort](Snort-SS/snort10.png)
+
 hping3 Traffic Test
 
  sudo hping3 -c 3 <Target_VM_IP>
+
+  ![Snort](Snort-SS/snort11.png)
 
 SSH Connection Attempt
 
 Because Metasploitable 2 uses outdated SSH keys, I connected using:
 
  ssh -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa msfadmin@<Target_VM_IP>
+
+  ![Snort](Snort-SS/snort12.png)
 
 7. Results and Analysis
 
@@ -163,6 +188,8 @@ All alerts were displayed in real time on the Ubuntu IDS host, confirming that t
 
 a.	ICMP (Ping) test result:
 
+  ![Snort](Snort-SS/snort13.png)
+
 Analysis:
 
 Snort generated an alert for ICMP Echo Request traffic targeting the monitored system.
@@ -176,6 +203,8 @@ On its own, this activity is not malicious, but when followed by scanning activi
 
 b.	Nmap (SYN) Scan result:
 
+  ![Snort](Snort-SS/snort14.png)
+
 Analysis:
 
 Snort identified TCP SYN packets sent to multiple ports without completing the TCP handshake.
@@ -188,7 +217,10 @@ This confirms the attacker is mapping the attack surface of the target system.
 	
 c.	Hping3 Traffic test result:
 
+  ![Snort](Snort-SS/snort15.png)
+
 Analysis:
+
 Snort flagged unusual TCP/ICMP packets generated using hping3, a packet crafting tool.
 hping3 is often used to:
 i.	Evade firewalls
@@ -215,18 +247,19 @@ This marks a transition from reconnaissance to exploitation.
 8. Recommended steps:
 
 The recommended Actions are:
-		i.	Block source IP address at firewall level
-		ii.	Review SSH logs for failed or successful login attempts
-		iii.	Implement:
+	i.	Block source IP address at firewall level
+	ii.	Review SSH logs for failed or successful login attempts
+	iii.	Implement:
 		•	SSH key-based authentication
 		•	Fail2Ban or rate-limiting
-		iv.	Tune Snort rules to reduce false positives
-		v.	Continue monitoring for:
+	iv.	Tune Snort rules to reduce false positives
+	v.	Continue monitoring for:
 		•	Privilege escalation
-.	Lateral movement
+	    •   Lateral movement
 
 
 9. Conclusion
+
 This project demonstrated the practical implementation of Snort as an Intrusion Detection System in a controlled lab environment. By configuring custom rules and simulating real attack traffic, the project provided hands-on experience in network monitoring, attack detection, and alert analysis.
 The successful detection of all simulated attacks highlights the effectiveness of Snort when properly configured and reinforces its importance in network security operations.
 
