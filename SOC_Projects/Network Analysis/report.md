@@ -79,6 +79,12 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
   iii. Repeated Login attempts on FTP port 21, exposing clear-text credentials<br>
   iv. Severity: High<br>
 
+   ![Screenshot](Screenshots/Ss1.jpeg)
+
+   ![Screenshot](Screenshots/Ss2.jpeg)
+
+   ![Screenshot](Screenshots/Ss3.jpeg)
+
 
 **Capture 2:** Stealth Scanning<br>
 
@@ -86,6 +92,8 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
  ii. Target IP: 192.168.56.101<br>
  iii. Description: Internal reconnaissance for open ports<br>
  iv: Severity: Medium<br>
+
+ ![Screenshot](Screenshots/Ss4.jpeg)
 
 
 **Capture 3:** Control Communication
@@ -95,6 +103,8 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
  iii. Description: Patterned traffic consistent with command and control activity.<br>
  iv. Severity: High<br>
 
+ ![Screenshot](Screenshots/Ss5.jpeg)
+
 
 **Capture 4:** FTP Brute force attack<br>
 
@@ -102,6 +112,10 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
  ii. Target IP: 192.168.56.102<br>
  iii. Description: Reverse-direction brute force attempts<br>
  iv.  Severity: High<br>
+
+ ![Screenshot](Screenshots/Ss6.jpeg)
+
+ ![Screenshot](Screenshots/Ss7.jpeg)
 
 
 
@@ -111,6 +125,8 @@ The analysis uncovered multiple overlapping security incidents, confirming an ac
  ii. Target IP: 192.168.56.101<br>
  iii. Desccription: New host targeted by original attacker<br>
  iv. Severity: High<br>
+
+ ![Screenshot](Screenshots/Ss8.jpeg)
 
 
 
