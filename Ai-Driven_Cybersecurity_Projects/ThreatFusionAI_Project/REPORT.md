@@ -518,7 +518,6 @@ The highest-severity case, **LAB-BRAVO-000** (risk score 100 after the Section 6
 - All indicators use IANA-reserved documentation ranges (`203.0.113.0/24`, `.invalid`, `.test`) that cannot resolve to real infrastructure
 - Indicators are defanged in all written output; refanging happens only inside matching/analysis code, never in a browser
 - No live malicious URLs were visited and no malware samples were downloaded at any point
-- Optional live-feed enrichment was skipped rather than performed without confirmed authorization
 - All records carry a TLP (Traffic Light Protocol) marking
 - STIX indicator objects are explicitly labeled `training-do-not-touch-live` to prevent accidental misuse if this data were ever exported elsewhere
 
