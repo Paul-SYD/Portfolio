@@ -264,10 +264,17 @@ Copied the graph file into the VM’s shared folder:
 ```bash
 cp outputs/graphs/threat_knowledge_graph.graphml /mnt/hgfs/SharedFolder/
 ```
+![AICS107](AICS107-SS/AICS107-17.png)
 
 Installed [yEd](https://www.yworks.com/products/yed) on the host machine to view the graph, since GraphML rendering needs a proper desktop GUI tool rather than anything available inside the VM terminal.
 
 Opened the graph file in yEd and applied an automatic **Organic** layout (Layout → Organic) to make it readable, since the default layout piles nodes on top of each other.
+
+![AICS107](AICS107-SS/AICS107-18.png)
+
+![AICS107](AICS107-SS/AICS107-19.png)
+
+![AICS107](AICS107-SS/AICS107-20.png)
 
 **Graph interpretation:**
 
