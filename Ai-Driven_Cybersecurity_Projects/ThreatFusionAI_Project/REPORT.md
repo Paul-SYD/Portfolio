@@ -127,7 +127,6 @@ Activated the virtual environment:
 ```bash
 source .venv/bin/activate
 ```
-![AICS107](AICS107-SS/AICS107-6.png)
 
 Generated the safe, synthetic CTI dataset to work with:
 
@@ -140,13 +139,14 @@ Used the following command to eyeball the first two sample records and confirm t
 ```bash
 head -n 2 data/raw/sample_cti_reports.jsonl
 ```
+![AICS107](AICS107-SS/AICS107-6.png)
 
 Confirmed completion of the setup by checking the project folder structure:
 
 ```bash
 find . -maxdepth 2 -type d | sort
 ```
-
+![AICS107](AICS107-SS/AICS107-4.png)
 -----
 
 ### 2. Intelligence Requirements & Source Matrix
