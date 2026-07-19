@@ -107,28 +107,27 @@ Changed into the project directory where the lab work would be carried out:
 cd ThreatFusionAI_Project
 ls
 ```
-![AICS107](AICS107-SS/AICS107-4.png)
 
 Changed the permissions on the setup dependencies to make them executable:
 
 ```bash
 chmod +x setup_linux.sh run_full_pipeline.sh
 ```
-![AICS107](AICS107-SS/AICS107-5.png)
+![AICS107](AICS107-SS/AICS107-4.png)
 
 Ran the setup script to build the Python virtual environment and install all project dependencies:
 
 ```bash
 ./setup_linux.sh
 ```
-![AICS107](AICS107-SS/AICS107-6.png)
+![AICS107](AICS107-SS/AICS107-5.png)
 
 Activated the virtual environment:
 
 ```bash
 source .venv/bin/activate
 ```
-![AICS107](AICS107-SS/AICS107-7.png)
+![AICS107](AICS107-SS/AICS107-6.png)
 
 Generated the safe, synthetic CTI dataset to work with:
 
