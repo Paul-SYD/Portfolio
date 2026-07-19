@@ -1,8 +1,8 @@
 # Deep Learning for Threat Detection — Technical Report
 
-**Course:** AICS-106 — Deep Learning for Threat Detection
-**Programme:** AI-Driven Cybersecurity and Digital Forensics Fellowship (ICDFA)
-**Author:** Yohanna Paul Sheawaza
+**Course:** AICS-106 — Deep Learning for Threat Detection<br>
+**Programme:** AI-Driven Cybersecurity and Digital Forensics Fellowship (ICDFA)<br>
+**Author:** Yohanna Paul Sheawaza<br>
 **Environment:** Ubuntu 24.04 LTS (VM), CPU-only
 
 -----
@@ -65,6 +65,7 @@ A shared folder was configured between the Windows host and the Ubuntu VM (VMwar
 ```bash
 unzip -l /mnt/hgfs/SharedFolder/<zip_file>.zip
 ```
+![AICS106](AICS106-SS/AICS106-1.png)
 
 This lists the archive’s contents without extracting, to confirm the correct files (`aics106_ai_soc_pipeline.py`, `aics106_log_sequence_model.py`, `requirements.txt`, etc.) were present before committing to extraction.
 
