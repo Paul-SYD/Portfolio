@@ -292,6 +292,7 @@ Located and reviewed the scoring logic:
 grep -rl "risk_score\|severity" threatfusion_ai/
 cat threatfusion_ai/scoring.py
 ```
+![AICS107](AICS107-SS/AICS107-21.png)
 
 The original scoring logic computed a case’s risk score as:
 
@@ -306,6 +307,7 @@ Saved a snapshot of the risk scores before the weight changes, so there would be
 ```bash
 cp data/processed/enriched_cases.jsonl data/processed/enriched_cases_BEFORE.jsonl
 ```
+![AICS107](AICS107-SS/AICS107-22.png)
 
 Edited `scoring.py`. The scoring function was located inside the file using the `grep -rl` search above, which narrowed six files containing “risk_score” or “severity” down to the one file (`scoring.py`) that actually calculates the score, as opposed to files that only display or export it (`reporting.py`, `stix_exporter.py`). Two new lines were added directly after the existing `c2` bonus line:
 
@@ -319,19 +321,26 @@ And the final score calculation was updated to include them:
 ```python
 score = min(100, 20 + technique_weight + high_impact + c2 + credential_theft + exfil_bonus + ioc_weight)
 ```
+![AICS107](AICS107-SS/AICS107-23.png)
 
 Re-ran the pipeline using the edited `scoring.py`, generating fresh scores with the new credential-theft and exfiltration bonuses applied:
 
 ```bash
 python -m threatfusion_ai.cli run-pipeline
 ```
+![AICS107](AICS107-SS/AICS107-24.png)
 
 Once that was done, pulled a quick side-by-side look at a few cases:
 
 ```bash
 grep -A 2 "LAB-BRAVO-000" data/processed/enriched_cases_BEFORE.jsonl
+```
+![AICS107](AICS107-SS/AICS107-25.png)
+
+```bash
 grep -A 2 "LAB-BRAVO-000" data/processed/enriched_cases.jsonl
 ```
+![AICS107](AICS107-SS/AICS107-26.png)
 
 This shows the report’s risk score before vs. after the changes, confirming the new weights actually took effect:
 
