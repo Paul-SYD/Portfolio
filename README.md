@@ -43,6 +43,5 @@ If you are a fellow defender, recruiter, or tech enthusiast, I’d love to conne
 * **LinkedIn:** [Paul Yohanna/https://www.linkedin.com/in/paul-yohanna]
 * **Email:** [paulsheawazayohanna@gmail.com]
 * **X:** [Paul/https://x.com/paul_in_defense]
-* **Portfolio Website:** [Link if applicable]
 
 Thank you for visiting! Feel free to explore the subfolders to see the technical documentation and architectures of individual projects.
