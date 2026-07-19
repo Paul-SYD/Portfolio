@@ -146,7 +146,7 @@ Confirmed completion of the setup by checking the project folder structure:
 ```bash
 find . -maxdepth 2 -type d | sort
 ```
-![AICS107](AICS107-SS/AICS107-4.png)
+![AICS107](AICS107-SS/AICS107-7.png)
 -----
 
 ### 2. Intelligence Requirements & Source Matrix
@@ -163,6 +163,7 @@ Ran the IOC extractor, which pulls indicators such as IPs, domains, URLs, and ha
 python -m threatfusion_ai.cli run-pipeline
 cat data/processed/enriched_cases.jsonl | head -n 3
 ```
+![AICS107](AICS107-SS/AICS107-8.png)
 
 **Defanging vs. refanging:** based on what the extracted data showed, defanged indicators are written in a deliberately broken form — e.g. `hxxp[://]evil[.]com` instead of `http://evil.com` — so they cannot be accidentally clicked, resolved, or trigger security tooling when shared in a report. Refanging (converting a defanged indicator back into its real, usable form) should only ever happen inside matching or analysis code — for example, when the pipeline needs to check an indicator against a live blocklist — and never in a browser or anything capable of connecting to it. This is standard CTI hygiene: analysts routinely share defanged indicators in written reports specifically so nobody on the distribution list accidentally interacts with a live malicious resource.
 
@@ -171,31 +172,16 @@ Added one new synthetic report to the raw dataset, following the same JSON forma
 ```bash
 nano data/raw/sample_cti_reports.jsonl
 ```
+![AICS107](AICS107-SS/AICS107-9.png)
 
 The report added:
 
 ```json
 {"id": "LAB-DELTA-000", "source": "synthetic-training-corpus", "title": "LAB-DELTA defensive CTI report 000", "text": "Suspicious outbound connections were observed to a staging host at 203.0.113.45. Phishing emails delivered a macro-enabled document that attempted to establish persistence via a scheduled task. Analysts also observed brute-force login attempts against a public-facing service.", "labels": ["T1566", "T1053", "T1110"], "confidence": "medium", "tlp": "TLP:CLEAR"}
 ```
+![AICS107](AICS107-SS/AICS107-10.png)
 
 The IP `203.0.113.45` was deliberately chosen from the IANA-reserved documentation range (`203.0.113.0/24`), which can never resolve to a real host — safe by design, not by luck.
-
-> **Bug encountered:** the first attempt to add this line via `nano` produced a `JSONDecodeError: Expecting value: line 1 column 428` on the next pipeline run. The line had been corrupted during editing. This was diagnosed by validating every line in the file with a short Python script:
-> 
-> ```python
-> import json
-> with open('data/raw/sample_cti_reports.jsonl') as f:
->     for i, line in enumerate(f, 1):
->         line = line.strip()
->         if not line:
->             continue
->         try:
->             json.loads(line)
->         except json.JSONDecodeError as e:
->             print(f'BROKEN at line {i}: {e}')
-> ```
-> 
-> This identified line 61 as broken. It was deleted (`sed -i '61d' data/raw/sample_cti_reports.jsonl`) and the report was re-added using `echo '...' >> data/raw/sample_cti_reports.jsonl` instead of an interactive editor — this writes the line atomically in one shot, avoiding the terminal-width line-wrapping issue that caused the original corruption.
 
 Re-ran the pipeline and confirmed the new report was extracted correctly:
 
@@ -203,6 +189,7 @@ Re-ran the pipeline and confirmed the new report was extracted correctly:
 python -m threatfusion_ai.cli run-pipeline
 grep -A 5 "LAB-DELTA-000" data/processed/enriched_cases.jsonl
 ```
+![AICS107](AICS107-SS/AICS107-11.png)
 
 This command re-processes the full dataset (including the new LAB-DELTA-000 entry) through the extraction pipeline, then filters the enriched output to show only the new report’s record plus the five lines following it — confirming its IOC (`203.0.113.45`) and ATT&CK labels were extracted and structured correctly, the same way every other report in the dataset was.
 
@@ -221,6 +208,7 @@ Viewed the output:
 ```bash
 cat outputs/model_evaluation.txt
 ```
+![AICS107](AICS107-SS/AICS107-12.png)
 
 This trains a multi-label model on the synthetic reports to predict MITRE ATT&CK techniques from report text — “multi-label” because a single report frequently maps to several techniques at once (e.g. one intrusion chain spanning initial access, execution, and exfiltration).
 
@@ -263,6 +251,9 @@ python -m threatfusion_ai.cli run-pipeline
 ls outputs/graphs/
 cat outputs/campaign_clusters.json
 ```
+![AICS107](AICS107-SS/AICS107-13.png)
+![AICS107](AICS107-SS/AICS107-14.png)
+![AICS107](AICS107-SS/AICS107-15.png)
 
 The graph connects reports, IOCs, and ATT&CK techniques as nodes, so relationships between them become visible — specifically, a **case** node (the report), **attack-technique** nodes, and **IOC** nodes (e.g. a sha256 hash), connected by edges representing which techniques and indicators each report exhibited.
 
