@@ -88,7 +88,7 @@ sudo apt update
 ```bash
 sudo apt install -y python3 python3-venv python3-pip git curl jq build-essential 
 ```
-![AICS107](AICS107-SS/AICS107-1.png)
+![AICS107](AICS107-SS/AICS107-2.png)
 
 
 `python3`, `pip`, and `jq` were required from the start — `jq` in particular for reading the STIX JSON output cleanly later in the project.
@@ -99,6 +99,7 @@ The lab dependency pack was made accessible to the VM by placing it in the VMwar
 cd /mnt/hgfs/SharedFolder
 unzip 6a47ae865dde5.zip
 ```
+![AICS107](AICS107-SS/AICS107-3.png)
 
 Changed into the project directory where the lab work would be carried out:
 
@@ -106,26 +107,28 @@ Changed into the project directory where the lab work would be carried out:
 cd ThreatFusionAI_Project
 ls
 ```
+![AICS107](AICS107-SS/AICS107-4.png)
 
 Changed the permissions on the setup dependencies to make them executable:
 
 ```bash
 chmod +x setup_linux.sh run_full_pipeline.sh
 ```
+![AICS107](AICS107-SS/AICS107-5.png)
 
 Ran the setup script to build the Python virtual environment and install all project dependencies:
 
 ```bash
 ./setup_linux.sh
 ```
+![AICS107](AICS107-SS/AICS107-6.png)
 
 Activated the virtual environment:
 
 ```bash
 source .venv/bin/activate
 ```
-
-> **Note:** the first two attempts at this command failed — `source venv/bin/activate` and `source.venv/bin/activate` both returned `No such file or directory`. The fix was recognizing the environment folder is `.venv` (a hidden folder, with the leading dot) and that a space is required between `source` and the path.
+![AICS107](AICS107-SS/AICS107-7.png)
 
 Generated the safe, synthetic CTI dataset to work with:
 
