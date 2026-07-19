@@ -365,6 +365,14 @@ python -m threatfusion_ai.cli run-pipeline
 jq ".objects[0:5]" outputs/stix/threatfusion_bundle.json
 jq '.objects[] | select(.type=="indicator")' outputs/stix/threatfusion_bundle.json
 ```
+![AICS107](AICS107-SS/AICS107-27.png)
+
+![AICS107](AICS107-SS/AICS107-28.png)
+
+![AICS107](AICS107-SS/AICS107-29.png)
+
+![AICS107](AICS107-SS/AICS107-30.png)
+![AICS107](AICS107-SS/AICS107-31.png)
 
 The first `jq` command previews the first five objects in the bundle. The second command was run to filter the whole bundle for just `indicator`-type objects instead of the first five, so the actual `pattern` field could be seen — the first five objects happened to be the report and four attack-pattern objects, so the indicator objects needed a targeted filter to surface.
 
@@ -397,14 +405,24 @@ python -m threatfusion_ai.cli report --case-id LAB-ALPHA
 python -m threatfusion_ai.cli report --case-id LAB-BRAVO
 python -m threatfusion_ai.cli report --case-id LAB-CHARLIE
 ```
+![AICS107](AICS107-SS/AICS107-32.png)
 
 The three reports were reviewed using:
 
 ```bash
 cat outputs/reports/LAB-ALPHA-007_intel_report.md
+```
+![AICS107](AICS107-SS/AICS107-33.png)
+
+```bash
 cat outputs/reports/LAB-BRAVO-000_intel_report.md
+```
+![AICS107](AICS107-SS/AICS107-34.png)
+
+```bash
 cat outputs/reports/LAB-CHARLIE-001_intel_report.md
 ```
+![AICS107](AICS107-SS/AICS107-35.png)
 
 The highest-severity case, **LAB-BRAVO-000** (risk score 100 after the Section 6 weighting changes), was rewritten for two audiences to demonstrate the same intelligence communicated differently depending on the reader.
 
