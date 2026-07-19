@@ -83,12 +83,12 @@ Started by updating the VM and installing the necessary tools:
 ```bash
 sudo apt update
 ```
-![AICS107](ThreatFusionAI_Project/AICS107-1.png)
+![AICS107](AICS107-SS/AICS107-1.png)
 
 ```bash
 sudo apt install -y python3 python3-venv python3-pip git curl jq build-essential 
 ```
-![AICS107](ThreatFusionAI_Project/AICS107-2.png)
+![AICS107](AICS107-SS/AICS107-1.png)
 
 
 `python3`, `pip`, and `jq` were required from the start — `jq` in particular for reading the STIX JSON output cleanly later in the project.
