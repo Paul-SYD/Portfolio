@@ -81,6 +81,7 @@ mkdir -p ~/aics106
 cd ~/aics106
 unzip /mnt/hgfs/SharedFolder/<zip_file>.zip
 ```
+![AICS106](AICS106-SS/AICS106-2.png)
 
 Extracting into the local filesystem (rather than working directly inside `/mnt/hgfs/`) avoids permission and file-locking issues that VMware’s shared-folder filesystem can cause with Python virtual environments.
 
@@ -98,6 +99,7 @@ python3 -m venv venv
 source venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 ```
+![AICS106](AICS106-SS/AICS106-3.png)
 
 The venv isolates project dependencies from the system Python. The shell prompt shows `(venv)` once active — this must be active for every subsequent command.
 
@@ -107,6 +109,10 @@ The venv isolates project dependencies from the system Python. The shell prompt 
 cd ~/aics106/lab_kit
 pip install -r requirements.txt
 ```
+![AICS106](AICS106-SS/AICS106-4.png)
+![AICS106](AICS106-SS/AICS106-5.png)
+![AICS106](AICS106-SS/AICS106-6.png)
+![AICS106](AICS106-SS/AICS106-7.png)
 
 This installed all required packages: `numpy`, `pandas`, `scikit-learn`, `joblib`, `matplotlib`, `torch`, `rich`, `pyyaml`, `tabulate`.
 
@@ -122,6 +128,7 @@ print('Pandas:', pd.__version__)
 print('Scikit-learn:', sklearn.__version__)
 PY
 ```
+![AICS106](AICS106-SS/AICS106-8.png)
 
 **Output:** Python, PyTorch, pandas, and scikit-learn versions printed cleanly with `CUDA available: False` (confirming CPU-only training for this run).
 
@@ -130,6 +137,7 @@ PY
 ```bash
 python aics106_ai_soc_pipeline.py self-test
 ```
+![AICS106](AICS106-SS/AICS106-9.png)
 
 **Output:** `OK` for Python, PyTorch, and label checks — confirming the pipeline script runs correctly in this environment before any data generation or training began.
 
@@ -150,12 +158,15 @@ This created 30,000 labeled synthetic network-flow records across six classes.
 ```bash
 python aics106_ai_soc_pipeline.py profile --data datasets/aics106_network_telemetry.csv --out reports/dataset_profile.md
 ```
+![AICS106](AICS106-SS/AICS106-10.png)
 
 **Step 3 — Read the profile report.**
 
 ```bash
 cat reports/dataset_profile.md
 ```
+![AICS106](AICS106-SS/AICS106-11.png)
+![AICS106](AICS106-SS/AICS106-12.png)
 
 **Result — Class Distribution:**
 
@@ -181,6 +192,8 @@ The dataset contained 30,000 complete rows across all numeric features (duration
 ```bash
 python aics106_ai_soc_pipeline.py train --data datasets/aics106_network_telemetry.csv --epochs 20 --model-out models/threatnet.pt
 ```
+![AICS106](AICS106-SS/AICS106-13.png)
+![AICS106](AICS106-SS/AICS106-14.png)
 
 **Output:** Per-epoch training loss and validation macro F1 were printed. Loss decreased steadily, reaching near-zero (0.0001–0.0146) from epoch 12 onward, with validation macro F1 reaching 0.9997–1.0000 from epoch 6 onward. The model was saved to `models/threatnet.pt`.
 
@@ -200,6 +213,7 @@ python aics106_ai_soc_pipeline.py train --data datasets/aics106_network_telemetr
 ```bash
 python aics106_ai_soc_pipeline.py evaluate --data datasets/aics106_network_telemetry.csv --model models/threatnet.pt --out reports/network_eval.md
 ```
+![AICS106](AICS106-SS/AICS106-15.png)
 
 **Result:**
 
@@ -237,12 +251,13 @@ See [Error Analysis](#error-analysis) for interpretation.
 ```bash
 python aics106_ai_soc_pipeline.py explain --data datasets/aics106_network_telemetry.csv --model models/threatnet.pt --samples 6 --out reports/explanations.md
 ```
-
 **Step 2 — Read the explanations.**
 
 ```bash
 cat reports/explanations.md
 ```
+![AICS106](AICS106-SS/AICS106-16.png)
+![AICS106](AICS106-SS/AICS106-17.png)
 
 **Representative results:**
 
@@ -271,6 +286,7 @@ This created 8,000 labeled session records, each an ordered sequence (up to 20 e
 ```bash
 python aics106_log_sequence_model.py train --data datasets/linux_auth_sequences.jsonl --epochs 12 --model-out models/linux_log_gru.pt
 ```
+![AICS106](AICS106-SS/AICS106-18.png)
 
 **Architecture:** A bidirectional 2-layer GRU with a 48-dimensional padding-aware embedding layer, hidden size 96 per direction (192 concatenated), dropout 0.15 between GRU layers, followed by a classification head (Linear 192→96 → GELU → Dropout 0.15 → Linear 96→4). An explicit stratified 75/25 train-test split was used (`random_state=106`), and the model was trained with the AdamW optimizer (learning rate 2e-3, weight decay 1e-4), cross-entropy loss, batch size 128.
 
@@ -292,6 +308,8 @@ Overall accuracy and macro/weighted averages: **1.00** across all 2,000 held-out
 ```bash
 python aics106_log_sequence_model.py demo --model models/linux_log_gru.pt --events 25
 ```
+![AICS106](AICS106-SS/AICS106-19.png)
+![AICS106](AICS106-SS/AICS106-20.png)
 
 This streamed 25 synthetic sessions through the trained model and printed live predictions. Examples: a sequence of repeated `login_fail` events followed by `login_success` was correctly classified as `brute_force` (confidence 1.0); a sequence containing `ssh_key_added` followed by `cron_modified` was correctly classified as `persistence_suspicion` (confidence 1.0) — both consistent with the intended semantics of those classes.
 
@@ -304,6 +322,8 @@ This streamed 25 synthetic sessions through the trained model and printed live p
 ```bash
 python aics106_ai_soc_pipeline.py live-demo --model models/threatnet.pt --events 80 --delay 0.05 --out reports/live_incidents.jsonl
 ```
+![AICS106](AICS106-SS/AICS106-21.png)
+![AICS106](AICS106-SS/AICS106-22.png)
 
 This streamed 80 simulated events through the trained ThreatNet model with a small delay between each, writing each as an incident record to `reports/live_incidents.jsonl`.
 
@@ -318,6 +338,8 @@ python aics106_ai_soc_pipeline.py summarize-incidents --infile reports/live_inci
 ```bash
 cat reports/live_summary.md
 ```
+![AICS106](AICS106-SS/AICS106-23.png)
+![AICS106](AICS106-SS/AICS106-24.png)
 
 **Result — Severity breakdown:** 33 high-severity alerts, 10 critical-severity alerts (out of 80 streamed events).
 
