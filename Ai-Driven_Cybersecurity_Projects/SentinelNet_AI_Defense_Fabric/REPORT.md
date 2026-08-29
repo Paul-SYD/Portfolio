@@ -67,6 +67,7 @@ Result: `/dev/sda2` — 69G total, 42G available. Python 3.12.3. Both comfortabl
 unzip /mnt/hgfs/SharedFolder/6a481a9276661.zip
 ```
 ![AICS109](AICS109-SS/AICS109-1.png)
+![AICS109](AICS109-SS/AICS109-2.png)
 
 - Changed directory into `SentinelNetAI_Project`, activated the Python virtual environment, and installed the project’s requirements.
 
@@ -76,6 +77,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+![AICS109](AICS109-SS/AICS109-3.png)
+![AICS109](AICS109-SS/AICS109-4.png)
 
 Installation was briefly interrupted twice by network issues — a `ReadTimeoutError` partway through the PyTorch download, and later a DNS resolution failure (`Temporary failure in name resolution`), consistent with a previously known intermittent VMware NAT/DHCP connectivity issue on this VM. Both were resolved simply by retrying once connectivity was restored; no code or configuration changes were needed.
 
@@ -84,6 +87,7 @@ Installation was briefly interrupted twice by network issues — a `ReadTimeoutE
 ```bash
 python3 -c "import torch, pandas, sklearn, numpy; print('torch:', torch.__version__); print('All core packages OK')"
 ```
+![AICS109](AICS109-SS/AICS109-5.png)
 
 -----
 
@@ -96,6 +100,7 @@ Proceeded to generate 12,000 rows of synthetic dataset:
 ```bash
 python scripts/00_generate_synthetic_network_data.py --rows 12000
 ```
+![AICS109](AICS109-SS/AICS109-6.png)
 
 Output:
 
@@ -111,6 +116,7 @@ Proceeded to quickly verify if the file was really there and has real content:
 ls -lh data/synthetic_flows.csv
 head -n 3 data/synthetic_flows.csv
 ```
+![AICS109](AICS109-SS/AICS109-7.png)
 
 That shows the file size and lets you eyeball the first couple of rows. Confirmed: a 1.8MB file with a real header row (`timestamp, src_ip, dst_ip, src_port, dst_port, proto, duration, packets, bytes_out, bytes_in, bytes_per_sec, packets_per_sec, outbound_ratio, unique_dst_ports_5m, failed_conn_5m, dns_entropy, beacon_score, burst_score, suricata_alert_count, tcp_state, asset_criticality, label`) and real sample rows — one PortScan example (UDP, `unique_dst_ports_5m: 199`, `failed_conn_5m: 26`) and one Benign example (TCP, clean `SF` connection state).
 
@@ -136,6 +142,7 @@ For the first step, a bigger dataset was generated:
 ```bash
 python scripts/00_generate_synthetic_network_data.py --rows 50000
 ```
+![AICS109](AICS109-SS/AICS109-8.png)
 
 Output: `[+] wrote 50000 rows to data/synthetic_flows.csv`
 
@@ -144,18 +151,21 @@ Then it was profiled:
 ```bash
 python scripts/01_profile_dataset.py
 ```
+![AICS109](AICS109-SS/AICS109-9.png)
 
 Then this was run to view our label counts:
 
 ```bash
 cat outputs/data_profile.json | jq '.label_counts'
 ```
+![AICS109](AICS109-SS/AICS109-10.png)
 
 And this to see the numeric summary of `bytes_out`:
 
 ```bash
 cat outputs/data_profile.json | jq '.numeric_summary.bytes_out'
 ```
+![AICS109](AICS109-SS/AICS109-11.png)
 
 **Label distribution (`.label_counts`):**
 
@@ -218,6 +228,7 @@ df = pd.read_csv('data/synthetic_flows.csv')
 print(df[FEATURES].corr(numeric_only=True).round(2))
 PY
 ```
+![AICS109](AICS109-SS/AICS109-12.png)
 
 Since our output didn’t fit on our screen (pandas truncated the middle columns), the following commands were used to make sure we weren’t missing anything important:
 
@@ -231,6 +242,8 @@ df = pd.read_csv('data/synthetic_flows.csv')
 print(df[FEATURES].corr(numeric_only=True).round(2))
 PY
 ```
+![AICS109](AICS109-SS/AICS109-13.png)
+![AICS109](AICS109-SS/AICS109-14.png)
 
 **Notable correlations found (14x14 feature correlation matrix):**
 
@@ -277,6 +290,7 @@ The following command was run:
 ```bash
 python scripts/02_train_supervised_ids.py --epochs 12
 ```
+![AICS109](AICS109-SS/AICS109-15.png)
 
 This loads our `data/synthetic_flows.csv`, splits it into training and test sets, trains a residual MLP, and passes the entire training dataset 12 times, adjusting its internal weights a little more each pass. At the end, it saves the trained model to `models/supervised_ids.pt` and writes performance numbers to `outputs/supervised_metrics.json`.
 
@@ -287,6 +301,10 @@ This was then run to see the key numbers:
 ```bash
 cat outputs/supervised_metrics.json | jq '.'
 ```
+![AICS109](AICS109-SS/AICS109-16.png)
+![AICS109](AICS109-SS/AICS109-17.png)
+![AICS109](AICS109-SS/AICS109-18.png)
+![AICS109](AICS109-SS/AICS109-19.png)
 
 **Metrics:** `macro_f1 = 1.0`, `weighted_f1 = 1.0` — every class perfectly classified.
 
@@ -327,6 +345,7 @@ For the unsupervised stage, this command was run:
 ```bash
 python scripts/03_train_autoencoder_anomaly.py --epochs 12
 ```
+![AICS109](AICS109-SS/AICS109-20.png)
 
 This trains two unsupervised models together:
 
@@ -340,6 +359,8 @@ This command was run to check the metrics:
 ```bash
 cat outputs/anomaly_metrics.json | jq '.'
 ```
+![AICS109](AICS109-SS/AICS109-21.png)
+![AICS109](AICS109-SS/AICS109-22.png)
 
 **Autoencoder results** (class `0` = Benign, `1` = Anomaly):
 
@@ -381,6 +402,7 @@ This command was run:
 ```bash
 python scripts/04_train_sequence_gru.py --epochs 10 --window 8
 ```
+![AICS109](AICS109-SS/AICS109-23.png)
 
 This trains a model that looks at a window of events per host over time, instead of judging each flow in isolation.
 
@@ -433,8 +455,13 @@ The following commands were run:
 
 ```bash
 head -n 2 sample_logs/suricata_eve_sample.jsonl | jq '.'
+```
+![AICS109](AICS109-SS/AICS109-24.png)
+
+```bash
 head -n 2 sample_logs/zeek_conn_sample.jsonl | jq '.'
 ```
+![AICS109](AICS109-SS/AICS109-25.png)
 
 These commands show just the first two lines of each file, in an actual readable format instead of one dense line.
 
@@ -449,19 +476,17 @@ Then this command was run:
 
 ```bash
 python scripts/05_run_streaming_detector.py --limit 500
-```
-
-This command runs our trained models against 500 flow records as if they were arriving live, cross-references them with the Suricata/Zeek-style data, and produces prioritized alerts combining all our signal sources into `outputs/stream_alerts.jsonl`.
-
-Output: `[+] processed=500 alerts=163 output=outputs/stream_alerts.jsonl` (32.6% alert rate).
-
-This command was then run:
-
-```bash
 cat outputs/stream_alerts.jsonl | head -n 10 | jq '.'
 ```
 
-This shows the first ten alerts from the generated file, printed so we can read the fields.
+This commands runs our trained models against 500 flow records as if they were arriving live, cross-references them with the Suricata/Zeek-style data, and produces prioritized alerts combining all our signal sources into `outputs/stream_alerts.jsonl`. and also shows the first ten alerts from the generated file, printed so we can read the fields.
+
+![AICS109](AICS109-SS/AICS109-26.png)
+![AICS109](AICS109-SS/AICS109-27.png)
+![AICS109](AICS109-SS/AICS109-28.png)
+![AICS109](AICS109-SS/AICS109-29.png)
+![AICS109](AICS109-SS/AICS109-30.png)
+
 
 **Top 10 alerts + ATT&CK mapping table:**
 
@@ -502,6 +527,7 @@ Firstly, the latency was measured by timing a larger run:
 ```bash
 time python scripts/05_run_streaming_detector.py --input data/synthetic_flows.csv --limit 2000
 ```
+![AICS109](AICS109-SS/AICS109-31.png)
 
 Output:
 
@@ -517,6 +543,7 @@ Then the fusion summary was checked:
 ```bash
 cat outputs/fusion_summary.json | jq '.alerts, .top_alerts[0]'
 ```
+![AICS109](AICS109-SS/AICS109-31-b.png)
 
 This pulls the total alert count and the single highest-priority alert from the fusion summary file, so we have a concrete “before” baseline before we start tuning thresholds. Top alert: DDoS, `10.10.8.209 → 10.10.5.181`, confidence 0.6, risk_score 100, `packets_per_sec: 2503.9`.
 
@@ -529,6 +556,7 @@ Then the threshold was tuned, firstly by checking what the script supports:
 ```bash
 python scripts/05_run_streaming_detector.py --help
 ```
+![AICS109](AICS109-SS/AICS109-32-a.png)
 
 This lists all available flags. Found out there’s no command-line way to tune severity thresholds directly — from the result, the threshold logic must be hardcoded inside the script itself (only `--input` and `--limit` are supported).
 
@@ -537,6 +565,7 @@ Took a look at the script to find where the threshold lives:
 ```bash
 grep -n "threshold\|risk_score\|confidence" scripts/05_run_streaming_detector.py | head -30
 ```
+![AICS109](AICS109-SS/AICS109-32.png)
 
 Figured the script doesn’t filter alerts by a threshold at this stage of the code — it builds an alert dict for every flow it processes and writes the top 10 by `risk_score` to `fusion_summary.json`. So “alerts=602 out of 2000” from earlier isn’t a threshold-based filter on its own.
 
@@ -545,6 +574,7 @@ This was confirmed and the real decision point was found:
 ```bash
 grep -n "Benign\|predicted_threat\|alerts.append\|if " scripts/05_run_streaming_detector.py | head -30
 ```
+![AICS109](AICS109-SS/AICS109-33.png)
 
 The result shows the real alerting condition:
 
@@ -573,6 +603,7 @@ cp scripts/05_run_streaming_detector.py scripts/05_run_streaming_detector_high_t
 sed -i "s/conf>0.45/conf>0.7/" scripts/05_run_streaming_detector_high_threshold.py
 python scripts/05_run_streaming_detector_high_threshold.py --input data/synthetic_flows.csv --limit 2000
 ```
+![AICS109](AICS109-SS/AICS109-34.png)
 
 This makes a copy of the script (so the original graded script is never touched) and tests a higher threshold (0.7) against the current default (0.45), then runs the modified copy on the same 2,000 records for a fair before/after comparison.
 
@@ -608,6 +639,7 @@ The following commands were run:
 python scripts/07_response_simulator.py --dry-run
 cat outputs/response_plan_lab_only.json | jq '.actions[:5]'
 ```
+![AICS109](AICS109-SS/AICS109-35.png)
 
 Result: `[]` — an empty actions array. This was investigated rather than written around. Checking the full file:
 
@@ -631,6 +663,13 @@ python scripts/05_run_streaming_detector.py --input data/synthetic_flows.csv --l
 python scripts/07_response_simulator.py --dry-run
 cat outputs/response_plan_lab_only.json | jq '.'
 ```
+![AICS109](AICS109-SS/AICS109-36.png)
+![AICS109](AICS109-SS/AICS109-37.png)
+![AICS109](AICS109-SS/AICS109-38.png)
+![AICS109](AICS109-SS/AICS109-39.png)
+![AICS109](AICS109-SS/AICS109-40.png)
+![AICS109](AICS109-SS/AICS109-41.png)
+![AICS109](AICS109-SS/AICS109-42.png)
 
 Result: `[+] processed=2000 alerts=602 output=outputs/stream_alerts.jsonl`, followed by a full, populated response plan.
 
@@ -687,8 +726,13 @@ Result: `[+] processed=2000 alerts=602 output=outputs/stream_alerts.jsonl`, foll
 
 ```bash
 python scripts/06_generate_incident_report.py
+```
+![AICS109](AICS109-SS/AICS109-43.png)
+
+```bash
 sed -n '1,120p' outputs/incident_report.md
 ```
+![AICS109](AICS109-SS/AICS109-44.png)
 
 **Auto-generated report contents (`outputs/incident_report.md`):**
 
@@ -729,24 +773,6 @@ Note: the auto-generated report only surfaces supervised and sequence macro F1 �
 1. Limitations & Closing (1 min) — Synthetic-only validation, sequence model rework needed, not production SOAR.
 
 -----
-
-## Full Evidence Checklist
-
-- [x] `data/synthetic_flows.csv` (50,000 rows)
-- [x] `outputs/data_profile.json`
-- [x] `outputs/supervised_metrics.json`
-- [x] `outputs/anomaly_metrics.json`
-- [x] `outputs/sequence_metrics.json`
-- [x] `outputs/stream_alerts.jsonl`
-- [x] `outputs/fusion_summary.json`
-- [x] `outputs/incident_report.md`
-- [x] `outputs/response_plan_lab_only.json`
-- [x] `models/supervised_ids.pt`
-- [x] `models/autoencoder.pt`
-- [x] `models/isolation_forest.joblib`
-- [x] `models/sequence_gru.pt`
-- [x] Screenshots/terminal logs for every lab
-- [x] Source code, including diagnostic additions (`05_run_streaming_detector_high_threshold.py`)
 
 **Required limitation statements (per capstone template):**
 
