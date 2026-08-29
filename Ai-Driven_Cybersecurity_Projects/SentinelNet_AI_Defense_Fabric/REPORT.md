@@ -63,6 +63,11 @@ Result: `/dev/sda2` — 69G total, 42G available. Python 3.12.3. Both comfortabl
 **Methodology:**
 
 - Made sure our lab dependencies were within reach of our VM in the shared folder and unzipped it.
+```bash
+unzip /mnt/hgfs/SharedFolder/6a481a9276661.zip
+```
+![AICS109](AICS109-SS/AICS109-1.png)
+
 - Changed directory into `SentinelNetAI_Project`, activated the Python virtual environment, and installed the project’s requirements.
 
 ```bash
