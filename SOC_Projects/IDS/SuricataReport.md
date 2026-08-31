@@ -45,11 +45,11 @@ Attacker Machine: Kali Linux VM<br>
 ```bash
    sudo apt-get update
 ```
-    ![Suricata](Suricata-SS/suricata4.png)
+  ![Suricata](Suricata-SS/suricata4.png)
 ```bash
    sudo apt-get install suricata -y
 ```
-    ![Suricata](Suricata-SS/suricata5.png)
+  ![Suricata](Suricata-SS/suricata5.png)
 
 5. Verified the status of Suricata:<br>
 ```bash
