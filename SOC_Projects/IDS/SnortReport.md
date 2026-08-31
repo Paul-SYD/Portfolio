@@ -40,23 +40,23 @@ This project highlights practical skills in intrusion detection, rule creation, 
  The Ubuntu machine served as the IDS host.
 
 **Step 1:** System Update
-
+```bash
  sudo apt-get update
-
+```
 **Step 2:** Install Snort
-
+```bash
  sudo apt-get install snort -y
-
+```
   During installation, Snort prompted for the network range it should monitor.
 
  To confirm my IP configuration, I ran:
-
+```bash
    ip a
-
+```
  Since I wanted Snort to monitor all traffic on the subnet (not just one host), I configured the network range as:
-
+```bash
    192.168.72.0/24
-
+```
  Snort version 2.9.20 installed successfully.
 
  ![Snort](Snort-SS/snort1.png) 
@@ -66,46 +66,46 @@ This project highlights practical skills in intrusion detection, rule creation, 
  Instead of relying solely on default rules, I created custom rule files to better understand how Snort detects different attack patterns.
 
  All rule files were stored in:
-
+```bash
    /etc/snort/rules/
-
+```
 
 **Detecting ICMP (Ping) Traffic**
 
   This rule detects basic ICMP echo requests.
-
+```bash
    sudo nano /etc/snort/rules/icmp.rules
    alert icmp any any -> any any (msg:"ICMP Ping Detected"; sid:100001; rev:1;)
-
+```
   ![Snort](Snort-SS/snort2.png)
 
 
 **Detecting Nmap SYN Scans**
 
    SYN scans are commonly used during reconnaissance.
-
+```bash
     sudo nano /etc/snort/rules/nmap.rules
     alert tcp any any -> any any (msg:"Nmap SYN Scan Detected"; flags:S; sid:100002; rev:1
-
+```
   ![Snort](Snort-SS/snort3.png)
 
 
 **Detecting hping3 Traffic**
 
   hping3 is often used for packet crafting and flooding attacks.
-
-    sudo nano /etc/snort/rules/hping3.rules
-    alert tcp any any -> any any (msg:"Possible hping3 Traffic"; flags:0; sid:100003; rev:1;)
-
+```bash
+ sudo nano /etc/snort/rules/hping3.rules
+ alert tcp any any -> any any (msg:"Possible hping3 Traffic"; flags:0; sid:100003; rev:1;)
+```
   ![Snort](Snort-SS/snort4.png)
 
 **Detecting SSH Connection Attempts**
    
  This rule detects incoming SSH connection attempts to port 22.
-
+```bash
    sudo nano /etc/snort/rules/ssh.rules
    alert tcp any any -> any 22 (msg:"SSH Connection Attempt"; flags:S; sid:100004; rev:1;)
-
+```
  ![Snort](Snort-SS/snort5.png)
 
 
@@ -114,66 +114,66 @@ This project highlights practical skills in intrusion detection, rule creation, 
    With the rules ready, Snort needed to be configured to recognize the correct network and load the rule files.
 
 **Editing the Snort Configuration**
-
+```bash
    sudo nano /etc/snort/snort.conf
-
+```
 The HOME_NET variable was updated:
-
+```bash
    ipvar HOME_NET 192.168.72.0/24
-
+```
  ![Snort](Snort-SS/snort6.png)
 
 At the bottom of the configuration file, the custom rules were included:
-
+```bash
   include $RULE_PATH/icmp.rules
   include $RULE_PATH/nmap.rules
   include $RULE_PATH/hping3.rules
   include $RULE_PATH/ssh.rules
-
+```
   ![Snort](Snort-SS/snort7.png)
 
 
 **Running Snort in Real Time**
 
    Once configured, Snort was launched in console mode to display alerts live.
-
+```bash
     sudo snort -A console -q -c /etc/snort/snort.conf -i ens33
-
+```
   ![Snort](Snort-SS/snort8.png)
 
 The active network interface was confirmed using:
-
+```bash
   ip a
-
+```
 
 **Simulating Attacks from Kali Linux**
 
    With Snort actively monitoring traffic, I switched to the attacker machine (Kali Linux) and launched several attacks against Metasploitable 2.
 
 **ICMP Ping Test**
-
+```bash
     ping -c 3 <Target_VM_IP>
-
+```
  ![Snort](Snort-SS/snort9.png)
 
 **Nmap SYN Scan** 
-
+```bash
     sudo nmap -sS <Target_VM_IP>
-
+```
  ![Snort](Snort-SS/snort10.png)
 
 **hping3 Traffic Test**
-
+```bash
     sudo hping3 -c 3 <Target_VM_IP>
-
+```
   ![Snort](Snort-SS/snort11.png)
 
 **SSH Connection Attempt**
 
   Because Metasploitable 2 uses outdated SSH keys, I connected using:
-
+```bash
     ssh -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa msfadmin@<Target_VM_IP>
-
+```
   ![Snort](Snort-SS/snort12.png)
 
 **Results and Analysis**
